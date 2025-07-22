@@ -1,0 +1,41 @@
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile.nginx
+    container_name: nginx_oop_container
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - php
+    networks:
+      - oop_network
+    restart: always
+
+  php:
+    image: php:8.3-fpm
+    container_name: php_oop_container
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    command: php -S
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql_oop_container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: oop_db
+      MYSQL_USER: oop_user
+      MYSQL_PASSWORD: oop_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - oop_network
+    restart: always
+
+  #redis:
